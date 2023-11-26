@@ -11,20 +11,27 @@ object BindingAdapter {
 
     @BindingAdapter("load_resource")
     @JvmStatic
-    fun setImageResource(imageView: ImageView, resource: Int) {
-        imageView.setImageResource(resource)
+    fun setImageResource(imageView: ImageView, resource: Int?) {
+        resource?.let {
+            imageView.setImageResource(resource)
+        }
     }
 
     @BindingAdapter("image_color")
     @JvmStatic
-    fun setImageColor(imageView: ImageView, color: String) {
-        imageView.imageTintList = ColorStateList.valueOf(Color.parseColor(color))
+    fun setImageColor(imageView: ImageView, color: String?) {
+        color?.let {
+
+            imageView.imageTintList = ColorStateList.valueOf(Color.parseColor(color))
+        }
     }
 
     @BindingAdapter("progress_bar_color")
     @JvmStatic
-    fun setProgressBarColor(circularProgressIndicator: CircularProgressIndicator, color: String) {
-        circularProgressIndicator.setIndicatorColor(Color.parseColor(color))
+    fun setProgressBarColor(circularProgressIndicator: CircularProgressIndicator, color: String?) {
+        color?.let {
+            circularProgressIndicator.setIndicatorColor(Color.parseColor(color))
+        }
     }
 
 }

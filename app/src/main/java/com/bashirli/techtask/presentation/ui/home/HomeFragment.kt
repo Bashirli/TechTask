@@ -5,16 +5,17 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.bashirli.techtask.R
 import com.bashirli.techtask.common.base.BaseFragment
 import com.bashirli.techtask.common.utils.gone
 import com.bashirli.techtask.common.utils.invisible
 import com.bashirli.techtask.common.utils.visible
+import com.bashirli.techtask.databinding.BottomFragmentStatementBinding
 import com.bashirli.techtask.databinding.FragmentHomeBinding
 import com.bashirli.techtask.domain.model.CardCategoryUiModel
 import com.bashirli.techtask.presentation.ui.home.adapters.CardAdapter
 import com.bashirli.techtask.presentation.ui.home.adapters.CategoryAdapter
+import com.bashirli.techtask.presentation.ui.home.adapters.DetailsAdapter
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -30,6 +32,7 @@ class HomeFragment :
     BaseFragment<FragmentHomeBinding, HomeViewModel>(FragmentHomeBinding::inflate) {
 
     override val viewModel: HomeViewModel by viewModels()
+
 
     private val yearItems = listOf("2021", "2022", "2023")
     private val monthItems by lazy {
@@ -42,6 +45,7 @@ class HomeFragment :
 
     private val cardAdapter = CardAdapter()
     private val categoryAdapter = CategoryAdapter()
+    private val detailsAdapter = DetailsAdapter()
     private var _cardCategoryUiModel: CardCategoryUiModel? = null
 
     override fun observeEvents() {
@@ -49,6 +53,10 @@ class HomeFragment :
             with(viewModel) {
                 liveData.observe(viewLifecycleOwner) {
                     when (it) {
+
+                        is HomeUiState.CategoryDetails -> {
+                            detailsAdapter.submitData(it.data.statements)
+                        }
 
                         is HomeUiState.CardDetails -> {
                             cardResponseUiModel = it.data
@@ -71,7 +79,6 @@ class HomeFragment :
                         else -> Unit
                     }
                 }
-
                 effect.observe(viewLifecycleOwner) {
                     when (it) {
                         is HomeUiEffect.ShowMessage -> Toast.makeText(
@@ -79,7 +86,6 @@ class HomeFragment :
                         ).show()
                     }
                 }
-
             }
         }
     }
@@ -106,11 +112,8 @@ class HomeFragment :
             buttonViewStatement.setOnClickListener {
                 _cardCategoryUiModel?.id?.let { id ->
                     val date = actvMonth.text.toString() + " " + actvYear.text.toString()
-                    findNavController().navigate(
-                        HomeFragmentDirections.actionHomeFragmentToStatementBottomDialog(
-                            id, date
-                        )
-                    )
+
+                    createBs(date, id)
                 }
             }
 
@@ -234,5 +237,18 @@ class HomeFragment :
         }
     }
 
+    private fun createBs(date: String, id: Int) {
+        val layout = BottomFragmentStatementBinding.inflate(layoutInflater)
+        val bsd = BottomSheetDialog(requireContext())
+        bsd.setContentView(layout.root)
+        viewModel.getDetails(id)
+
+        layout.rvDetails.adapter = detailsAdapter
+        layout.cardCategoryUiModel = _cardCategoryUiModel
+        layout.date = date
+
+        bsd.show()
+
+    }
 
 }
