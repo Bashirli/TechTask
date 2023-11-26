@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.bashirli.techtask.presentation.ui.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_statementBottomDialog"
+            app:destination="@id/statementBottomDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/statementBottomDialog"
+        tools:layout="@layout/bottom_fragment_statement"
+        android:name="com.bashirli.techtask.presentation.ui.home.bottom.StatementBottomDialog"
+        android:label="StatementBottomDialog">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <argument
+            android:name="detailsDate"
+            app:argType="string" />
+    </dialog>
+</navigation>
