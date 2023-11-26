@@ -33,6 +33,8 @@ class HomeFragment :
 
     override val viewModel: HomeViewModel by viewModels()
 
+    private var _bsdState = true
+
 
     private val yearItems = listOf("2021", "2022", "2023")
     private val monthItems by lazy {
@@ -111,9 +113,11 @@ class HomeFragment :
 
             buttonViewStatement.setOnClickListener {
                 _cardCategoryUiModel?.id?.let { id ->
-                    val date = actvMonth.text.toString() + " " + actvYear.text.toString()
-
-                    createBs(date, id)
+                    if(_bsdState){
+                        val date = actvMonth.text.toString() + " " + actvYear.text.toString()
+                        createBs(date, id)
+                        _bsdState = false
+                    }
                 }
             }
 
@@ -248,6 +252,10 @@ class HomeFragment :
         layout.date = date
 
         bsd.show()
+
+        bsd.setOnDismissListener {
+            _bsdState = true
+        }
 
     }
 
